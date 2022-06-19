@@ -5,6 +5,8 @@ let video: HTMLVideoElement;
 let canvas: HTMLCanvasElement;
 let context: CanvasRenderingContext2D;
 let model: any;
+let touchDelay = 5; // Delay between alerts, in seconds
+let lastTouch = new Date(0).getTime();
 
 interface Prediction {
   bbox: number[];
@@ -45,12 +47,20 @@ async function render() {
   for (let i = 0; i < facePreds.length; i += 1) {
     for (let j = 0; j < handPreds.length; j += 1) {
       if (overlapping(facePreds[i], handPreds[j])) {
-        console.log("Face and hand overlapping");
+        let now = new Date().getTime();
+        if ((now - lastTouch) / 1000 > touchDelay) {
+          console.log("Alert");
+          lastTouch = now;
+        }
+
+        // Break out of both loops
+        j = handPreds.length;
+        break;
       }
     }
   }
 
-  requestAnimationFrame(render);
+  video.requestVideoFrameCallback(render);
 }
 
 async function start() {
@@ -67,8 +77,7 @@ async function start() {
 
   // Start rendering predictions
   video.addEventListener("loadeddata", () => {
-    console.log("Video loaded");
-    render();
+    video.requestVideoFrameCallback(render);
   });
 }
 
