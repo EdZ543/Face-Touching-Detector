@@ -28,6 +28,14 @@ function overlapping(predA: Prediction, predB: Prediction) {
   return true;
 }
 
+function notify() {
+  if (Notification.permission === "granted") {
+    const options = {};
+
+    new Notification("Face Touching Detected!", options);
+  }
+}
+
 async function render() {
   const predictions = await model.detect(video);
 
@@ -49,7 +57,8 @@ async function render() {
       if (overlapping(facePreds[i], handPreds[j])) {
         let now = new Date().getTime();
         if ((now - lastTouch) / 1000 > touchDelay) {
-          console.log("Alert");
+          notify();
+
           lastTouch = now;
         }
 
@@ -64,6 +73,8 @@ async function render() {
 }
 
 async function start() {
+  await Notification.requestPermission();
+
   // Get HTML elements
   video = document.getElementById("video") as HTMLVideoElement;
   canvas = document.getElementById("canvas") as HTMLCanvasElement;
