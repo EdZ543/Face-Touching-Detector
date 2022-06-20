@@ -2,8 +2,8 @@ import { ToggleButton } from "react-bootstrap";
 import { useState } from "react";
 
 const Settings = () => {
-  const [sound, setSound] = useState(false);
-  const [notification, setNotification] = useState(true);
+  const [sound, setSound] = useState(true);
+  const [notification, setNotification] = useState(false);
 
   return (
     <div className="flex" id="settings-panel">
