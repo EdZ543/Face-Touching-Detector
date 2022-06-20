@@ -1,6 +1,8 @@
 {
   "short_name": "Face Touching Detector",
   "name": "Face Touching Detector",
+  "orientation": "any",
+  "shortcuts": [{}],
   "icons": [
     {
       "src": "logo.png",
