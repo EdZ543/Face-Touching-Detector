@@ -3,6 +3,7 @@
   "name": "Face Touching Detector",
   "orientation": "any",
   "shortcuts": [{}],
+  "related_applications": [{}],
   "icons": [
     {
       "src": "logo.png",
