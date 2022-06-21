@@ -1,4 +1,5 @@
 import { useEffect } from "react";
+
 const handTrack = require("handtrackjs");
 
 let video: HTMLVideoElement;
@@ -7,6 +8,8 @@ let context: CanvasRenderingContext2D;
 let model: any;
 let touchDelay = 5; // Delay between alerts, in seconds
 let lastTouch = new Date(0).getTime();
+let videoWidth: number;
+let videoHeight: number;
 
 interface Prediction {
   bbox: number[];
@@ -76,9 +79,17 @@ async function start() {
   await Notification.requestPermission();
 
   // Get HTML elements
+  let loadingIcon = document.getElementById("loading-icon") as HTMLImageElement;
   video = document.getElementById("video") as HTMLVideoElement;
   canvas = document.getElementById("canvas") as HTMLCanvasElement;
   context = canvas!.getContext("2d") as CanvasRenderingContext2D;
+
+  videoWidth = video.videoWidth;
+  videoHeight = video.videoHeight;
+  video.width = videoWidth;
+  video.height = videoHeight;
+  canvas.width = video.videoWidth;
+  canvas.height = video.videoHeight;
 
   // Start video
   handTrack.startVideo(video);
@@ -88,6 +99,9 @@ async function start() {
 
   // Start rendering predictions
   video.addEventListener("loadeddata", () => {
+    loadingIcon.style.display = "none";
+    canvas.style.display = "block";
+
     video.requestVideoFrameCallback(render);
   });
 }
@@ -103,9 +117,15 @@ const Webcam = () => {
   }, []);
 
   return (
-    <canvas id="canvas">
+    <div>
       <video id="video" hidden />
-    </canvas>
+      <img
+        id="loading-icon"
+        src="spinning-wheel-of-death.png"
+        alt="loading icon"
+      />
+      <canvas id="canvas" />
+    </div>
   );
 };
 

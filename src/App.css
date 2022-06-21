@@ -1,3 +1,14 @@
+* {
+  background-color: #191919;
+}
+
+html,
+body {
+  margin: 0;
+  height: 100%;
+  overflow: hidden;
+}
+
 .flex {
   display: flex;
 }
@@ -5,7 +16,6 @@
 .App {
   width: 100vw;
   height: 100vh;
-  background-color: #191919;
 }
 
 #settings-panel {
@@ -14,7 +24,7 @@
   justify-content: start;
   align-items: start;
   border-right: 2px solid #4a4a4a;
-  padding: 10px;
+  padding: 2em;
   flex: 0 0 20em;
 }
 
@@ -27,7 +37,34 @@
 }
 
 #canvas {
+  object-fit: contain;
   border-radius: 10px;
+  display: none;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+#loading-icon {
+  width: 100px;
+  height: auto;
+
+  animation-name: spin;
+  animation-duration: 800ms;
+  animation-iteration-count: infinite;
+  animation-timing-function: linear;
+
+  user-select: none;
+  -moz-user-select: none;
+  -khtml-user-select: none;
+  -webkit-user-select: none;
+  -o-user-select: none;
 }
 
 p {
