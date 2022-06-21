@@ -5,6 +5,7 @@ const handTrack = require("handtrackjs");
 let video: HTMLVideoElement;
 let canvas: HTMLCanvasElement;
 let context: CanvasRenderingContext2D;
+let warningText: HTMLHeadingElement;
 let model: any;
 let touchDelay = 5; // Delay between alerts, in seconds
 let lastTouch = new Date(0).getTime();
@@ -30,11 +31,7 @@ function overlapping(predA: Prediction, predB: Prediction) {
 }
 
 function notify() {
-  if (Notification.permission === "granted") {
-    const options = {};
-
-    new Notification("Face Touching Detected!", options);
-  }
+  new Notification("Face Touching Detected!");
 }
 
 async function render() {
@@ -53,6 +50,9 @@ async function render() {
     }
   }
 
+  warningText.style.color = "white";
+  warningText.textContent = "Face Touching Not Detected :)";
+
   for (let i = 0; i < facePreds.length; i += 1) {
     for (let j = 0; j < handPreds.length; j += 1) {
       if (overlapping(facePreds[i], handPreds[j])) {
@@ -62,6 +62,10 @@ async function render() {
 
           lastTouch = now;
         }
+
+        // Change warning text
+        warningText.style.color = "red";
+        warningText.textContent = "Face Touching Detected!";
 
         // Break out of both loops
         j = handPreds.length;
@@ -81,6 +85,7 @@ async function start() {
   video = document.getElementById("video") as HTMLVideoElement;
   canvas = document.getElementById("canvas") as HTMLCanvasElement;
   context = canvas!.getContext("2d") as CanvasRenderingContext2D;
+  warningText = document.getElementById("warning") as HTMLHeadingElement;
 
   // Start video
   handTrack.startVideo(video);
@@ -108,7 +113,7 @@ const Webcam = () => {
   }, []);
 
   return (
-    <div>
+    <div className="flex" id="webcam-container">
       <video id="video" hidden />
       <img
         id="loading-icon"
@@ -116,6 +121,8 @@ const Webcam = () => {
         alt="loading icon"
       />
       <canvas id="canvas" />
+      {/* eslint-disable-next-line jsx-a11y/heading-has-content */}
+      <h2 id="warning" />
     </div>
   );
 };
