@@ -8,8 +8,6 @@ let context: CanvasRenderingContext2D;
 let model: any;
 let touchDelay = 5; // Delay between alerts, in seconds
 let lastTouch = new Date(0).getTime();
-let videoWidth: number;
-let videoHeight: number;
 
 interface Prediction {
   bbox: number[];
@@ -83,13 +81,6 @@ async function start() {
   video = document.getElementById("video") as HTMLVideoElement;
   canvas = document.getElementById("canvas") as HTMLCanvasElement;
   context = canvas!.getContext("2d") as CanvasRenderingContext2D;
-
-  videoWidth = video.videoWidth;
-  videoHeight = video.videoHeight;
-  video.width = videoWidth;
-  video.height = videoHeight;
-  canvas.width = video.videoWidth;
-  canvas.height = video.videoHeight;
 
   // Start video
   handTrack.startVideo(video);
