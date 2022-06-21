@@ -25,7 +25,7 @@ body {
   align-items: start;
   border-right: 1px solid #4a4a4a;
   padding: 2em;
-  flex: 0 0 20em;
+  flex: 0 0 18em;
 }
 
 #webcam-panel {

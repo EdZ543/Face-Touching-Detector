@@ -4,13 +4,19 @@ const handTrack = require("handtrackjs");
 
 const Webcam = (props: any) => {
   useEffect(() => {
+    let model: any;
     let video: HTMLVideoElement;
     let canvas: HTMLCanvasElement;
     let context: CanvasRenderingContext2D;
     let warningText: HTMLHeadingElement;
-    let model: any;
-    let touchDelay = 5; // Delay between alerts, in seconds
-    let lastTouch = new Date(0).getTime();
+    let alertDelay = 5; // Delay between alerts, in seconds
+    let lastAlert = new Date(0).getTime();
+
+    function alert() {
+      if (props.notifications) {
+        new Notification("Face Touching Detected!");
+      }
+    }
 
     function overlapping(predA: any, predB: any) {
       // bbox: [x, y, width, height]
@@ -51,10 +57,10 @@ const Webcam = (props: any) => {
         for (let j = 0; j < handPreds.length; j += 1) {
           if (overlapping(facePreds[i], handPreds[j])) {
             let now = new Date().getTime();
-            if ((now - lastTouch) / 1000 > touchDelay) {
-              props.notify();
+            if ((now - lastAlert) / 1000 > alertDelay) {
+              alert();
 
-              lastTouch = now;
+              lastAlert = now;
             }
 
             // Change warning text
@@ -72,8 +78,6 @@ const Webcam = (props: any) => {
     }
 
     async function start() {
-      await Notification.requestPermission();
-
       // Get HTML elements
       let loadingIcon = document.getElementById(
         "loading-icon"
@@ -104,7 +108,7 @@ const Webcam = (props: any) => {
       if (video) handTrack.stopVideo(video);
       if (model) model.dispose();
     };
-  }, []);
+  }, [props]);
 
   return (
     <div className="flex" id="webcam-container">

@@ -7,10 +7,6 @@ function App() {
   const [notifications, setNotifications] = useState(false);
   const [sounds, setSounds] = useState(false);
 
-  function notify() {
-    if (notifications) new Notification("Face Touching Detected!");
-  }
-
   return (
     <div className="flex App">
       <Settings
@@ -20,7 +16,7 @@ function App() {
         setNotifications={setNotifications}
       />
       <div className="flex" id="webcam-panel">
-        <Webcam notify={notify} />
+        <Webcam notifications={notifications} sounds={sounds} />
       </div>
     </div>
   );
