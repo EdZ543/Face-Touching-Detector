@@ -3,12 +3,13 @@
   "name": "Face Touching Detector",
   "icons": [
     {
-      "src": "icons/logo.svg",
-      "sizes": "any"
+      "src": "icons/icon.svg",
+      "sizes": "192x192 512x512"
     }
   ],
   "orientation": "any",
   "shortcuts": [{}],
+  "screenshots": [{}],
   "related_applications": [{}],
   "start_url": ".",
   "display": "standalone",
