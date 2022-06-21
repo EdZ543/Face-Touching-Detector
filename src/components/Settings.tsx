@@ -1,36 +1,32 @@
 import { ToggleButton } from "react-bootstrap";
-import { useState } from "react";
 
-const Settings = () => {
-  const [sound, setSound] = useState(false);
-  const [notification, setNotification] = useState(false);
-
+const Settings = (props: any) => {
   return (
     <div className="flex" id="settings-panel">
-      <p>Alert with sound</p>
-      <ToggleButton
-        id="Sound"
-        type="checkbox"
-        value="Sound"
-        checked={sound}
-        variant="outline-primary"
-        onChange={(e) => setSound(e.currentTarget.checked)}
-      >
-        {sound ? "Yes" : "No"}
-      </ToggleButton>
-
-      <br />
-
       <p>Alert with desktop notification</p>
       <ToggleButton
         id="Notification"
         type="checkbox"
         value="Notification"
-        checked={notification}
+        checked={props.notifications}
         variant="outline-primary"
-        onChange={(e) => setNotification(e.currentTarget.checked)}
+        onChange={(e) => props.setNotifications(e.currentTarget.checked)}
       >
-        {notification ? "Yes" : "No"}
+        {props.notifications ? "Yes" : "No"}
+      </ToggleButton>
+
+      <br />
+
+      <p>Alert with sound</p>
+      <ToggleButton
+        id="Sound"
+        type="checkbox"
+        value="Sound"
+        checked={props.sounds}
+        variant="outline-primary"
+        onChange={(e) => props.setSounds(e.currentTarget.checked)}
+      >
+        {props.sounds ? "Yes" : "No"}
       </ToggleButton>
     </div>
   );
