@@ -9,12 +9,17 @@ const Webcam = (props: any) => {
     let canvas: HTMLCanvasElement;
     let context: CanvasRenderingContext2D;
     let warningText: HTMLHeadingElement;
+    let audio: HTMLAudioElement;
     let alertDelay = 5; // Delay between alerts, in seconds
     let lastAlert = new Date(0).getTime();
 
     function alert() {
       if (props.notifications) {
         new Notification("Face Touching Detected!");
+      }
+
+      if (props.sounds) {
+        audio.play();
       }
     }
 
@@ -86,12 +91,26 @@ const Webcam = (props: any) => {
       canvas = document.getElementById("canvas") as HTMLCanvasElement;
       context = canvas!.getContext("2d") as CanvasRenderingContext2D;
       warningText = document.getElementById("warning") as HTMLHeadingElement;
+      audio = document.getElementById("audio") as HTMLAudioElement;
 
       // Start video
       handTrack.startVideo(video);
 
       // Load model
-      model = await handTrack.load();
+      const config = {
+        flipHorizontal: false,
+        outputStride: 16,
+        imageScaleFactor: 1,
+        maxNumBoxes: 20,
+        iouThreshold: 0.2,
+        scoreThreshold: 0.6,
+        modelType: "ssd320fpnlite",
+        modelSize: "small",
+        bboxLineWidth: "2",
+        fontSize: 17,
+      };
+
+      model = await handTrack.load(config);
 
       // Start rendering predictions
       video.addEventListener("loadeddata", () => {
@@ -112,6 +131,9 @@ const Webcam = (props: any) => {
 
   return (
     <div className="flex" id="webcam-container">
+      <audio id="audio">
+        <source src="assets/bababoey.mp3"></source>
+      </audio>
       <video id="video" hidden />
       <img
         id="loading-icon"
