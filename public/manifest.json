@@ -3,7 +3,7 @@
   "name": "Face Touching Detector",
   "icons": [
     {
-      "src": "icons/icon.svg",
+      "src": "assets/icon.svg",
       "sizes": "192x192 512x512"
     }
   ],
