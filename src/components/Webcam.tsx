@@ -19,16 +19,19 @@ const Webcam = (props: any) => {
     let warningText: HTMLHeadingElement;
     let audio: HTMLAudioElement;
     let alertDelay = 5; // Delay between alerts, in seconds
+    let fps = 69;
     let lastAlert = new Date(0).getTime();
     let timer: NodeJS.Timer;
 
     function alert() {
       if (notifications.current) {
         new Notification("Face Touching Detected!");
+        lastAlert = new Date().getTime();
       }
 
       if (sounds.current) {
         audio.play();
+        lastAlert = new Date().getTime();
       }
     }
 
@@ -67,23 +70,18 @@ const Webcam = (props: any) => {
       warningText.style.color = "white";
       warningText.textContent = "Face Touching Not Detected :)";
 
-      for (let i = 0; i < facePreds.length; i += 1) {
+      loop: for (let i = 0; i < facePreds.length; i += 1) {
         for (let j = 0; j < handPreds.length; j += 1) {
           if (overlapping(facePreds[i], handPreds[j])) {
-            let now = new Date().getTime();
-            if ((now - lastAlert) / 1000 > alertDelay) {
+            if ((new Date().getTime() - lastAlert) / 1000 > alertDelay) {
               alert();
-
-              lastAlert = now;
             }
 
             // Change warning text
             warningText.style.color = "red";
             warningText.textContent = "Face Touching Detected!";
 
-            // Break out of both loops
-            j = handPreds.length;
-            break;
+            break loop;
           }
         }
       }
@@ -127,7 +125,7 @@ const Webcam = (props: any) => {
 
         timer = setInterval(() => {
           render();
-        }, 69);
+        }, fps);
       });
     }
 

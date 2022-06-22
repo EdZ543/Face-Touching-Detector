@@ -16,7 +16,7 @@ function App() {
     localForage.getItem("sounds").then((value) => {
       if (value !== null) setSounds(value as boolean);
     });
-  }, [notifications, sounds]);
+  }, []);
 
   function setNotificationsSync(x: boolean) {
     if (x && Notification.permission !== "granted") {
