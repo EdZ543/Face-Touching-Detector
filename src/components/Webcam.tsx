@@ -2,27 +2,17 @@ import { useEffect, useRef } from "react";
 
 const handTrack = require("handtrackjs");
 
-// Model config
-const config = {
-  flipHorizontal: false,
-  outputStride: 16,
-  imageScaleFactor: 1,
-  maxNumBoxes: 20,
-  iouThreshold: 0.2,
-  scoreThreshold: 0.6,
-  modelType: "ssd320fpnlite",
-  modelSize: "small",
-  bboxLineWidth: "2",
-  fontSize: 17,
-};
-
 const Webcam = (props: any) => {
-  // Store model across renders
-  const model = useRef(handTrack.load(config));
-
-  console.log(typeof model);
+  const sounds = useRef(false);
+  const notifications = useRef(false);
 
   useEffect(() => {
+    sounds.current = props.sounds;
+    notifications.current = props.notifications;
+  }, [props]);
+
+  useEffect(() => {
+    let model: any;
     let video: HTMLVideoElement;
     let canvas: HTMLCanvasElement;
     let context: CanvasRenderingContext2D;
@@ -32,11 +22,11 @@ const Webcam = (props: any) => {
     let lastAlert = new Date(0).getTime();
 
     function alert() {
-      if (props.notifications) {
+      if (notifications.current) {
         new Notification("Face Touching Detected!");
       }
 
-      if (props.sounds) {
+      if (sounds.current) {
         audio.play();
       }
     }
@@ -114,6 +104,22 @@ const Webcam = (props: any) => {
       // Start video
       handTrack.startVideo(video);
 
+      // Load model
+      const config = {
+        flipHorizontal: false,
+        outputStride: 16,
+        imageScaleFactor: 1,
+        maxNumBoxes: 20,
+        iouThreshold: 0.2,
+        scoreThreshold: 0.6,
+        modelType: "ssd320fpnlite",
+        modelSize: "small",
+        bboxLineWidth: "2",
+        fontSize: 17,
+      };
+
+      model = await handTrack.load(config);
+
       // Start rendering predictions
       video.addEventListener("loadeddata", () => {
         loadingIcon.style.display = "none";
@@ -124,7 +130,12 @@ const Webcam = (props: any) => {
     }
 
     start();
-  }, [props]);
+
+    return function cleanup() {
+      if (video) handTrack.stopVideo(video);
+      if (model) model.dispose();
+    };
+  }, []);
 
   return (
     <div className="flex" id="webcam-container">
