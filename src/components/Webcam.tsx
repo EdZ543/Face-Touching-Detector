@@ -126,7 +126,7 @@ const Webcam = (props: any) => {
         canvas.style.display = "block";
 
         timer = setInterval(() => {
-          video.requestVideoFrameCallback(render);
+          render();
         }, 69);
       });
     }
