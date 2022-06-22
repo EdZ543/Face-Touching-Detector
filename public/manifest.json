@@ -8,9 +8,6 @@
     }
   ],
   "orientation": "any",
-  "shortcuts": [{}],
-  "screenshots": [{}],
-  "related_applications": [{}],
   "start_url": ".",
   "display": "standalone",
   "theme_color": "#000000",

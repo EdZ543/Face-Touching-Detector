@@ -20,6 +20,7 @@ const Webcam = (props: any) => {
     let audio: HTMLAudioElement;
     let alertDelay = 5; // Delay between alerts, in seconds
     let lastAlert = new Date(0).getTime();
+    let timer: NodeJS.Timer;
 
     function alert() {
       if (notifications.current) {
@@ -86,8 +87,6 @@ const Webcam = (props: any) => {
           }
         }
       }
-
-      video.requestVideoFrameCallback(render);
     }
 
     async function start() {
@@ -95,6 +94,7 @@ const Webcam = (props: any) => {
       let loadingIcon = document.getElementById(
         "loading-icon"
       ) as HTMLImageElement;
+
       video = document.getElementById("video") as HTMLVideoElement;
       canvas = document.getElementById("canvas") as HTMLCanvasElement;
       context = canvas!.getContext("2d") as CanvasRenderingContext2D;
@@ -125,16 +125,21 @@ const Webcam = (props: any) => {
         loadingIcon.style.display = "none";
         canvas.style.display = "block";
 
-        video.requestVideoFrameCallback(render);
+        timer = setInterval(() => {
+          video.requestVideoFrameCallback(render);
+        }, 69);
       });
     }
 
     start();
 
-    return function cleanup() {
+    function cleanup() {
+      clearInterval(timer);
       if (video) handTrack.stopVideo(video);
       if (model) model.dispose();
-    };
+    }
+
+    return cleanup;
   }, []);
 
   return (
