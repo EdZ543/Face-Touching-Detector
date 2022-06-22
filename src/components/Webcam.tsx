@@ -5,6 +5,8 @@ const handTrack = require("handtrackjs");
 const Webcam = (props: any) => {
   const sounds = useRef(false);
   const notifications = useRef(false);
+  const modelLoaded = useRef(false);
+  const videoLoaded = useRef(false);
 
   useEffect(() => {
     sounds.current = props.sounds;
@@ -70,7 +72,7 @@ const Webcam = (props: any) => {
       warningText.style.color = "white";
       warningText.textContent = "Face Touching Not Detected :)";
 
-      loop: for (let i = 0; i < facePreds.length; i += 1) {
+      for (let i = 0; i < facePreds.length; i += 1) {
         for (let j = 0; j < handPreds.length; j += 1) {
           if (overlapping(facePreds[i], handPreds[j])) {
             if ((new Date().getTime() - lastAlert) / 1000 > alertDelay) {
@@ -81,7 +83,7 @@ const Webcam = (props: any) => {
             warningText.style.color = "red";
             warningText.textContent = "Face Touching Detected!";
 
-            break loop;
+            return;
           }
         }
       }
@@ -100,23 +102,28 @@ const Webcam = (props: any) => {
       audio = document.getElementById("audio") as HTMLAudioElement;
 
       // Start video
-      handTrack.startVideo(video);
+      if (!videoLoaded.current) {
+        await handTrack.startVideo(video);
+        videoLoaded.current = true;
+      }
 
       // Load model
-      const config = {
-        flipHorizontal: false,
-        outputStride: 16,
-        imageScaleFactor: 1,
-        maxNumBoxes: 20,
-        iouThreshold: 0.2,
-        scoreThreshold: 0.6,
-        modelType: "ssd320fpnlite",
-        modelSize: "small",
-        bboxLineWidth: "2",
-        fontSize: 17,
-      };
-
-      model = await handTrack.load(config);
+      if (!modelLoaded.current) {
+        const config = {
+          flipHorizontal: false,
+          outputStride: 16,
+          imageScaleFactor: 1,
+          maxNumBoxes: 20,
+          iouThreshold: 0.2,
+          scoreThreshold: 0.6,
+          modelType: "ssd320fpnlite",
+          modelSize: "small",
+          bboxLineWidth: "2",
+          fontSize: 17,
+        };
+        model = await handTrack.load(config);
+        modelLoaded.current = true;
+      }
 
       // Start rendering predictions
       video.addEventListener("loadeddata", () => {
