@@ -19,12 +19,16 @@ function App() {
   }, [notifications, sounds]);
 
   function setNotificationsSync(x: boolean) {
+    if (x && Notification.permission !== "granted") {
+      Notification.requestPermission();
+    }
+
     localForage.setItem("notifications", x);
     setNotifications(x);
   }
 
   function setSoundsSync(x: boolean) {
-    localForage.setItem("sounds", x, (value) => console.log(value));
+    localForage.setItem("sounds", x);
     setSounds(x);
   }
 
