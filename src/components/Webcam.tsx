@@ -96,19 +96,7 @@ const Webcam = (props: any) => {
       audio = document.getElementById("audio") as HTMLAudioElement;
 
       // Load model
-      const config = {
-        flipHorizontal: false,
-        outputStride: 16,
-        imageScaleFactor: 1,
-        maxNumBoxes: 20,
-        iouThreshold: 0.2,
-        scoreThreshold: 0.6,
-        modelType: "ssd320fpnlite",
-        modelSize: "small",
-        bboxLineWidth: "2",
-        fontSize: 17,
-      };
-      model = await handTrack.load(config);
+      model = await handTrack.load();
 
       // Start video
       await handTrack.startVideo(video);
