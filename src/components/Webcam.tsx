@@ -5,8 +5,7 @@ const handTrack = require("handtrackjs");
 const Webcam = (props: any) => {
   const sounds = useRef(false);
   const notifications = useRef(false);
-  const modelLoaded = useRef(false);
-  const videoLoaded = useRef(false);
+  const setTimer = useRef(false);
 
   useEffect(() => {
     sounds.current = props.sounds;
@@ -23,7 +22,6 @@ const Webcam = (props: any) => {
     let alertDelay = 5; // Delay between alerts, in seconds
     let fps = 69;
     let lastAlert = new Date(0).getTime();
-    let timer: NodeJS.Timer;
 
     function alert() {
       if (notifications.current) {
@@ -91,60 +89,50 @@ const Webcam = (props: any) => {
 
     async function start() {
       // Get HTML elements
-      let loadingIcon = document.getElementById(
-        "loading-icon"
-      ) as HTMLImageElement;
-
       video = document.getElementById("video") as HTMLVideoElement;
       canvas = document.getElementById("canvas") as HTMLCanvasElement;
       context = canvas!.getContext("2d") as CanvasRenderingContext2D;
       warningText = document.getElementById("warning") as HTMLHeadingElement;
       audio = document.getElementById("audio") as HTMLAudioElement;
 
-      // Start video
-      if (!videoLoaded.current) {
-        await handTrack.startVideo(video);
-        videoLoaded.current = true;
-      }
-
       // Load model
-      if (!modelLoaded.current) {
-        const config = {
-          flipHorizontal: false,
-          outputStride: 16,
-          imageScaleFactor: 1,
-          maxNumBoxes: 20,
-          iouThreshold: 0.2,
-          scoreThreshold: 0.6,
-          modelType: "ssd320fpnlite",
-          modelSize: "small",
-          bboxLineWidth: "2",
-          fontSize: 17,
-        };
-        model = await handTrack.load(config);
-        modelLoaded.current = true;
-      }
+      const config = {
+        flipHorizontal: false,
+        outputStride: 16,
+        imageScaleFactor: 1,
+        maxNumBoxes: 20,
+        iouThreshold: 0.2,
+        scoreThreshold: 0.6,
+        modelType: "ssd320fpnlite",
+        modelSize: "small",
+        bboxLineWidth: "2",
+        fontSize: 17,
+      };
+      model = await handTrack.load(config);
+
+      // Start video
+      await handTrack.startVideo(video);
 
       // Start rendering predictions
       video.addEventListener("loadeddata", () => {
-        loadingIcon.style.display = "none";
+        document.getElementById("loading-icon")!.style.display = "none";
         canvas.style.display = "block";
 
-        timer = setInterval(() => {
-          render();
-        }, fps);
+        if (setTimer.current === false) {
+          setTimer.current = true;
+          setInterval(() => {
+            render();
+          }, fps);
+        }
       });
     }
 
     start();
 
-    function cleanup() {
-      clearInterval(timer);
+    return () => {
       if (video) handTrack.stopVideo(video);
       if (model) model.dispose();
-    }
-
-    return cleanup;
+    };
   }, []);
 
   return (
