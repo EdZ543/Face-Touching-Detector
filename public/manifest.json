@@ -4,7 +4,7 @@
   "icons": [
     {
       "src": "assets/icon.svg",
-      "sizes": "192x192 512x512"
+      "sizes": "any"
     }
   ],
   "orientation": "any",
