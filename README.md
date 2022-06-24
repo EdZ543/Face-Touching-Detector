@@ -9,3 +9,4 @@ So, I built this app to automatically detect whenever you touch your face and al
 ## Technology
 - PWA
 - React
+- Typescript
